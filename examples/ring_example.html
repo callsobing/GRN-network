@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Networks with D3plus</title>
+
+  <!-- load D3js -->
+  <script type="text/javascript" src="./lib/d3plus.v1.9.8/js/d3.js"></script>
+
+  <!-- load D3plus after D3js -->
+  <script src="./lib/d3plus.v1.9.8/js/d3plus.js"></script>
+</head>
+
+<body>
+  <div id="viz"></div>
+  <section>
+    <hr>
+    <h1>Data Preview</h1>
+    <h3><code>./data/artist.tsv</code></h3>
+    <pre>
+      count familiarity   long       names             lat        artist_id            hotttnesss    location
+      2     0.3968178443             Carroll Thompson             AR009211187B989185   0.2974048029
+      4     0.5140642764  -84.59334  The Meatmen       42.73383   AR00A6H1187FB5402A   0.3956275143  US
+      2     0.4712126074             Bruce BecVar                 AR00LNI1187FB444A5   0.3402755073
+      3     0.5885718421  -90.05202  Memphis Minnie    29.95244   AR00MBZ1187B9B5DB1   0.360644227   US
+      ...
+    </pre>
+    <h3><code>./data/edges.tsv</code></h3>
+    <pre>
+      source	 target	 strength
+      AR82DJK1187B991107	AR8RXRI1187FB4104B	0.7415193453742193
+      ARHONG11187FB3B120	AR12F2S1187FB56EEF	0.3536419994065859
+      ARBUOOR1187B997391	ARH6W4X1187B99274F	0.7595060502321512
+      ARJVTRE1187B9959C0	ARJ9DSA1187B990E00	0.5657611820969316
+      ...
+    </pre>
+    <h3><code>./data/nodes.tsv</code></h3>
+    <pre>
+      x	  y	  artist_id
+      -1281.7540283203125	2498.380126953125	AR82DJK1187B991107
+      -1146.4553833007812	421.5451354980469	ARHONG11187FB3B120
+      -926.1343688964844	1284.6697387695312	ARBUOOR1187B997391
+      -1070.5610961914062	755.147705078125	ARJVTRE1187B9959C0
+      ...
+    </pre>
+  </section>
+
+  <script>
+    var visualization;
+
+  d3.tsv("./million_songs_data/artists.tsv", function(artists){
+    d3.tsv("./million_songs_data/nodes.tsv", function(nodes){
+      d3.tsv("./million_songs_data/edges.tsv", function(edges){
+
+        // need to cast strength as number for proper label formatting
+        edges.forEach(function(d){
+          d["strength"] = parseFloat(d["strength"])
+        })
+
+        /* Now here's where we actually create the network */
+        visualization = d3plus.viz()
+          .id("artist_id")              // set id to match on nodes
+          .attrs(artists)               // attrs e.g. names, colors etc.
+          .container("#viz")            // container DIV to hold the viz
+          .type("rings")                // visualization type
+          .focus("AR65K7A1187FB4DAA4")  // center node on Beyonce
+          .text("names")                // set text to display on nodes
+          .edges({
+            "value": edges,             // set data for edges (default)
+            "label": "strength",        // show edge labels
+            "arrows": true              // show directional arrows
+          })
+          .draw()                       // finally, draw the visualization!
+      })
+    })
+  })
+  </script>
+
+</body>
