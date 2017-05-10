@@ -1,31 +1,36 @@
 <!doctype html>
 <html>
-
 <head>
   <meta charset="utf-8">
   <title>c4lab sg4 - GRN viz 2017/05/04 </title>
+
   <!-- load D3js -->
+  <!-- <script src="https://cdn.bootcss.com/d3/4.8.0/d3.min.js"></script> -->
   <script type="text/javascript" src="./lib/d3plus.v1.9.8/js/d3.js"></script>
+
   <!-- load D3plus after D3js -->
+  <!-- <script src="https://cdn.bootcss.com/d3plus/1.9.8/d3plus.full.min.js"></script> -->
   <script src="./lib/d3plus.v1.9.8/js/d3plus.js"></script>
+
   <!-- Vue.js 2.0 -->
-  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue@2.3.2/dist/vue.js"></script>
 </head>
 
 <body>
   <div id="app">
     <!-- Draw other file -->
     <span>Switch dataset: </span>
-    <button type="radio" @click="changeFile('./data/GRN_1000.tsv')">1000 nodes</button>
-    <button type="radio" @click="changeFile('./data/GRN_10000.tsv')">10000 nodes</button>
-    <button type="radio" @click="changeFile('./data/GRNv1.0.0.tsv')">64598 nodes</button><br>
-    <div><a :href="filepath">{{filepath}}</a></div>
-    <a :href="id_path">{{id_path}}</a><hr>
+    <button type="radio" @click="changeFile('./data/GRN_1000.tsv', './data/id_1000.tsv')">1000 nodes</button>
+    <button type="radio" @click="changeFile('./data/GRN_10000.tsv', './data/id_10000.tsv')">10000 nodes</button>
+    <button type="radio" @click="changeFile('./data/GRNv1.0.0.tsv', './data/id_2prop.tsv')">64598 nodes</button><br>
+    <div>Connections: <a :href="connc_file">{{connc_file}}</a></div>
+    <div>Nodes: <a :href="node_file">{{node_file}}</a><hr></div>
 
     <!-- Search -->
     <span>Jump to node: </span>
     <input type="text" name="focus" v-model="focus" placeholder="How about R00430?">
     <button type="button" @click="redraw()">Find <span>{{ focus }}</span></button>
+    <span><code>ids: {{ ids }}; edges: {{ edges }}</code></span>
   </div>
   <!-- Randering Area -->
   <div id="viz"></div>
@@ -34,10 +39,10 @@
 
   var htmlButton = "<a id='google' href='http://www.google.com' target='_blank'>Click here to go to Google</a>"
 
-  const variables = {
-    // visualization: {},
-    filepath: './data/GRNv1.0.0.tsv',
-    id_path: './data/id_properties.tsv',
+  const init_var = {
+    connc_file: './data/GRNv1.0.0.tsv',
+    node_file: './data/id_3prop.tsv',
+    visualization: {},
     focus: 'T00015',
     ids: {},
     edges: {},
@@ -45,19 +50,21 @@
 
   var vm = new Vue({
     el: '#app',
-    data: variables,
-    created: function() {
-      d3.tsv(this.id_path, function(ids){
-        d3.tsv(vm.filepath, function(edges){
+    data: init_var,
+    beforeCreate: function() {
+      console.log('beforeCreated');
+      d3.tsv(init_var.node_file, function(ids){
+        d3.tsv(init_var.connc_file, function(edges){
           vm.draw(ids, edges)
-          vm.ids = ids
-          vm.edges = edges
+          // vm.ids = ids
+          // vm.edges = edges
         })
       })
     },
     methods: {
-      changeFile: function(file) {
-        vm.filepath = file
+      changeFile: function(conn_file, id_file) {
+        vm.connc_file = conn_file
+        vm.node_file = id_file
         vm.redraw()
       },
       draw: function(i, e) {
@@ -88,8 +95,8 @@
         // Clear
         document.getElementById("viz").innerHTML = ""
         // Load data and Draw
-        d3.tsv(vm.id_path, function(ids){
-          d3.tsv(vm.filepath, function(edges){
+        d3.tsv(vm.node_file, function(ids){
+          d3.tsv(vm.connc_file, function(edges){
             vm.draw(ids, edges)
           })
         })
@@ -98,5 +105,4 @@
   })
 
   </script>
-
 </body>
