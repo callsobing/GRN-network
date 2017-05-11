@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>c4lab sg4 - GRN viz 2017/05/04 </title>
+
+  <!-- load D3js -->
+  <!-- <script src="https://cdn.bootcss.com/d3/4.8.0/d3.min.js"></script> -->
+  <script type="text/javascript" src="./lib/d3plus.v1.9.8/js/d3.js"></script>
+
+  <!-- load D3plus after D3js -->
+  <!-- <script src="https://cdn.bootcss.com/d3plus/1.9.8/d3plus.full.min.js"></script> -->
+  <script src="./lib/d3plus.v1.9.8/js/d3plus.js"></script>
+
+  <!-- Vue.js 2.0 -->
+  <script src="https://unpkg.com/vue@2.3.2/dist/vue.js"></script>
+
+  <script src="./data/TRANSFAC/gene.js" charset="utf-8"></script>
+</head>
+
+<body>
+  <div id="app">
+    <!-- Draw other file -->
+    <span>Switch dataset: </span>
+    <button type="radio" @click="changeFile('./data/GRN_1000.tsv', './data/id_1000.tsv')">1000 nodes</button>
+    <button type="radio" @click="changeFile('./data/GRN_10000.tsv', './data/id_10000.tsv')">10000 nodes</button>
+    <button type="radio" @click="changeFile('./data/GRNv1.0.0.tsv', './data/id_2prop.tsv')">64598 nodes</button><br>
+    <div>Connections: <a :href="connc_file">{{connc_file}}</a></div>
+    <div>Nodes: <a :href="node_file">{{node_file}}</a><hr></div>
+
+    <!-- Search -->
+    <span>Jump to node: </span>
+    <input list="suggestions" type="text" name="focus" v-model="focus" placeholder="T00015">
+    <datalist id="suggestions">
+      <option v-for="id in limitBy(20, matchedIds)" :value="id.id"></option>
+    </datalist>
+    <button type="button" @click="redraw()">Go</button><hr>
+    <h1 v-html="msg"></h1><hr>
+
+  </div>
+  <!-- Randering Area -->
+  <div id="viz"></div>
+
+
+  <script>
+
+  var htmlButton = "<a id='google' href='http://www.google.com' target='_blank'>Click here to go to Google</a>"
+  // const gene_json = require('./data/TRANSFAC/gene.json');
+
+  const init_var = {
+    msg: 'Hello d3plus',
+    connc_file: './data/GRNv1.0.0.tsv',
+    node_file: './data/TRANSFAC/gene.tab', // TODO: REFACTOR!
+    visualization: {},
+    focus: 'T00015',
+    ids: data,
+    edges: [],
+  }
+
+  var vm = new Vue({
+    el: '#app',
+    data: init_var,
+    created: function() {
+      var self = this
+      var loading = setInterval(()=>{
+        self.msg = String(self.msg) + '.'
+      }, 500)
+      console.log('self.ids', self.ids);
+      self.msg = 'Loading <code>' + self.connc_file + '</code> ...'
+      d3.tsv(self.connc_file, function(edges){
+        self.edges = edges
+        self.draw(self.ids, self.edges)
+        self.msg = ''
+        clearInterval(loading)
+      })
+    },
+    methods: {
+      changeFile: function(conn_file, id_file) {
+        vm.connc_file = conn_file
+        vm.node_file = id_file
+        vm.redraw()
+      },
+      draw: function(i, e) {
+        document.getElementById("viz").innerHTML = ""
+        // cast strength as number for proper label formatting
+        e.forEach(function(d){
+          d["strength"] = parseFloat(d["strength"])
+        })
+
+        /* Now here's where we actually create the network */
+        vm.visualization = d3plus.viz()
+        .id("id")              // set id to match on nodes
+        .attrs(i)               // attrs e.g. names, colors etc.
+        .container("#viz")            // container DIV to hold the viz
+        .type("rings")                // visualization type
+        .focus(vm.focus)  // center node on Beyonce
+        .text("id")                // set text to display on nodes
+        .edges({
+          "value": e,             // set data for edges (default)
+          "label": "strength",        // show edge labels
+          "arrows": true              // show directional arrows
+        })
+        // .tooltip(['Name', 'Organism', 'Ref'])
+        .tooltip(['AC', 'OS', 'FA', 'BS', 'RL'])
+        // .tooltip({"html": htmlButton})
+        .draw()                       // finally, draw the visualization!
+      },
+      redraw: function() {
+        // Clear
+        document.getElementById("viz").innerHTML = ""
+        // Load data and Draw
+        d3.tsv(vm.node_file, function(ids){
+          d3.tsv(vm.connc_file, function(edges){
+            vm.draw(ids, edges)
+          })
+        })
+      },
+      limitBy: function(n, items) {
+        return items.slice(0, n)
+      },
+    },
+    computed: {
+      matchedIds: function () {
+        var self = this
+        return self.ids.filter(function (id) {
+          return id.AC.indexOf(self.focus) !== -1
+        })
+      }
+    }
+  })
+  data = ""
+
+  </script>
+</body>
