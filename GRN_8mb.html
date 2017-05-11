@@ -28,9 +28,13 @@
 
     <!-- Search -->
     <span>Jump to node: </span>
-    <input type="text" name="focus" v-model="focus" placeholder="How about R00430?">
-    <button type="button" @click="redraw()">Find <span>{{ focus }}</span></button>
-    <span><code>ids: {{ ids }}; edges: {{ edges }}</code></span>
+    <input list="suggestions" type="text" name="focus" v-model="focus" placeholder="T00015">
+    <datalist id="suggestions">
+      <option v-for="id in limitBy(20, matchedIds)" :value="id.id"></option>
+    </datalist>
+    <button type="button" @click="redraw()">Go</button><hr>
+    <h1 v-html="msg"></h1>
+
   </div>
   <!-- Randering Area -->
   <div id="viz"></div>
@@ -40,24 +44,33 @@
   var htmlButton = "<a id='google' href='http://www.google.com' target='_blank'>Click here to go to Google</a>"
 
   const init_var = {
+    msg: 'Hello d3plus',
     connc_file: './data/GRNv1.0.0.tsv',
     node_file: './data/id_3prop.tsv',
+    // node_file: './data/TRANSFAC/gene.tab',
     visualization: {},
     focus: 'T00015',
-    ids: {},
-    edges: {},
+    ids: [{'id':'N/A'}],
+    edges: [],
   }
 
   var vm = new Vue({
     el: '#app',
     data: init_var,
-    beforeCreate: function() {
-      console.log('beforeCreated');
-      d3.tsv(init_var.node_file, function(ids){
-        d3.tsv(init_var.connc_file, function(edges){
-          vm.draw(ids, edges)
-          // vm.ids = ids
-          // vm.edges = edges
+    created: function() {
+      var self = this
+      var loading = setInterval(()=>{
+        self.msg = String(self.msg) + '.'
+      }, 500)
+      self.msg = 'Loading <code>' + self.node_file + '</code> ...'
+      d3.tsv(self.node_file, function(ids){
+        self.msg = 'Loading <code>' + self.connc_file + '</code> ...'
+        d3.tsv(self.connc_file, function(edges){
+          self.ids = ids
+          self.edges = edges
+          self.draw(self.ids, self.edges)
+          self.msg = ''
+          clearInterval(loading)
         })
       })
     },
@@ -101,6 +114,17 @@
           })
         })
       },
+      limitBy: function(n, items) {
+        return items.slice(0, n)
+      },
+    },
+    computed: {
+      matchedIds: function () {
+        var self = this
+        return self.ids.filter(function (id) {
+          return id.id.indexOf(self.focus) !== -1
+        })
+      }
     }
   })
 
