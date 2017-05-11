@@ -1,6 +1,5 @@
 ## Demo
-https://choznerol.github.io/GRN-network/GRN_8mb.html
-https://choznerol.github.io/GRN-network/GRN_148mb.html
+https://choznerol.github.io/GRN-network/GRN_1mb_noID.html
 
 ## Usage
 
