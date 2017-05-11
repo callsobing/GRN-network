@@ -47,7 +47,7 @@
     msg: 'Hello d3plus',
     connc_file: './data/GRNv1.0.0.tsv',
     // node_file: './data/id_3prop.tsv',
-    node_file: './data/TRANSFAC/gene.tab',
+    node_file: './data/TRANSFAC/site.tab',
     visualization: {},
     focus: 'T00015',
     ids: [{'AC':'N/A'}],
@@ -89,20 +89,20 @@
 
         /* Now here's where we actually create the network */
         vm.visualization = d3plus.viz()
-        .id("id")              // set id to match on nodes
+        .id("AC")              // set id to match on nodes
         .attrs(i)               // attrs e.g. names, colors etc.
         .container("#viz")            // container DIV to hold the viz
         .type("rings")                // visualization type
         .focus(vm.focus)  // center node on Beyonce
-        .text("id")                // set text to display on nodes
+        .text("ID")                // set text to display on nodes
         .edges({
           "value": e,             // set data for edges (default)
           "label": "strength",        // show edge labels
           "arrows": true              // show directional arrows
         })
         // .tooltip(['Name', 'Organism', 'Ref'])
-        .tooltip(['AC', 'OS', 'FA', 'BS', 'RL'])
-        // .tooltip({"html": htmlButton})
+        .tooltip(['AC', 'AS', 'OS', 'FA', 'BS', 'RL'])
+        // .tooltip(true)
         .draw()                       // finally, draw the visualization!
       },
       redraw: function() {
