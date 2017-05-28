@@ -22,11 +22,13 @@ export default {
     return {
       viz: {},
       focus: 'T00015',
-      node_file: '/static/id_2prop.csv',
-      edge_file: '/static/GRNv1.0.0.csv',
-      hint_file: '/static/id.tsv',
       hints: []
     }
+  },
+  computed: {
+    node_file_path: () => require('../assets/id_2prop.tsv'),
+    edge_file_path: () => require('../assets/GRNv1.0.0.tsv'),
+    hint_file_path: () => require('../assets/id.tsv')
   },
   mounted () {
     this.init_draw()
@@ -35,9 +37,9 @@ export default {
   methods: {
     init_draw () {
       let vm = this
-      d3.tsv('./static/id_2prop.tsv', function(nodes){
+      d3.tsv(vm.node_file_path, function(nodes){
         // console.log('** nodes: ', nodes);
-        d3.tsv('./static/GRNv1.0.0.tsv', function(edges){
+        d3.tsv(vm.edge_file_path, function(edges){
           // console.log('** edges: ', edges);
 
           let visualization = d3plus.viz()
@@ -63,7 +65,7 @@ export default {
       this.viz.focus(focus_node).draw()
     },
     init_autocomplete () {
-      d3.tsv(this.hint_file, (id) => {
+      d3.tsv(this.hint_file_path, (id) => {
         this.hints = id.map(o => o.id)
       })
     },
