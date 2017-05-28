@@ -1,14 +1,6 @@
-## Demo
-https://choznerol.github.io/GRN-network/GRN_8mb.html
-https://choznerol.github.io/GRN-network/GRN_148mb.html
-
 ## Usage
 
 ```
-git clone https://github.com/choznerol/GRN-netrowk.git
-
-cd GRN-network
-
 // Start a local server with python 3
 python -m http.server 8888 &
 

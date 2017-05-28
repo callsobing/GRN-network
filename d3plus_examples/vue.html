@@ -1,0 +1,122 @@
+<!doctype html>
+<meta charset="utf-8">
+<!-- <script src="./lib/d3plus.v1.9.8/js/d3.min.js"></script>
+<script src="./lib/d3plus.v1.9.8/js/d3plus.js"></script> -->
+<script src="https://cdn.bootcss.com/d3/4.7.4/d3.min.js"></script>
+<script src="https://cdn.bootcss.com/d3plus/1.9.8/d3plus.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.js" charset="utf-8"></script>
+
+<div id="viz"></div>
+
+<div id="app">
+  <section>
+    name:<input type="text" v-model="newNode.name"><br>
+    size:<input type="text" v-model="newNode.size"><br>
+    color:<input type="text" v-model="newNode.color"><br>
+    x:<input type="text" v-model="newNode.x"><br>
+    y:<input type="text" v-model="newNode.y"><br>
+    Preview:<pre>{{ newNode }}</pre>
+    <button type="button" v-on:click="addNode">Add New Node!</button>
+  </section>
+</div>
+
+<script type="text/javascript">
+// 主要資料，以name為key，a至h為不同property
+var init_sample_data = [
+  {"name": "alpha", "size": 10, "color": "Maroon",  "a":1, "b":2, "c":3},
+  {"name": "beta", "size": 12, "color": "Maroon",   "a":1, "b":2, "c":3},
+  {"name": "gamma", "size": 30, "color": "Navy",    "a":1, "b":2, "c":3},
+  {"name": "delta", "size": 26, "color": "Navy",    "a":1, "b":2, "c":3},
+  {"name": "epsilon", "size": 12, "color": "Maroon","a":1, "b":2, "c":3},
+  {"name": "zeta", "size": 26, "color": "Maroon",   "a":1, "b":2, "c":3},
+  {"name": "theta", "size": 11, "color": "Navy",    "a":1, "b":2, "c":3},
+  {"name": "eta", "size": 24, "color": "Maroon",    "a":1, "b":2, "c":3},
+  {"name": "lala", "size": 15, "color": "Green",    "a":1, "b":2, "c":3},
+]
+// Node的座標資料，如不提供D3plus會隨機產生一種node不重疊的排法
+var init_positions = [
+  {"name": "alpha", "x": 10, "y": 15},
+  {"name": "beta", "x": 12, "y": 24},
+  {"name": "gamma", "x": 16, "y": 18},
+  {"name": "delta", "x": 26, "y": 21},
+  {"name": "epsilon", "x": 13, "y": 4},
+  {"name": "zeta", "x": 31, "y": 13},
+  {"name": "theta", "x": 19, "y": 8},
+  {"name": "eta", "x": 24, "y": 11}
+]
+// Edge的資料，每個點都需出現否則不會畫出來
+var init_connections = [
+  {"source": "alpha", "target": "beta",    "color": "Gold"       ,"strength": 0.01},
+  {"source": "alpha", "target": "gamma",   "color": "Gold"       ,"strength": 0.2},
+  {"source": "beta",  "target": "delta",   "color": "LightGreen" ,"strength": 0.3},
+  {"source": "beta",  "target": "epsilon", "color": "Gold"       ,"strength": 0.4},
+  {"source": "zeta",  "target": "gamma",   "color": "LightGreen" ,"strength": 0.5},
+  {"source": "theta", "target": "gamma",   "color": "Gold"       ,"strength": 0.6},
+  {"source": "eta",   "target": "gamma",   "color": "Gold"       ,"strength": 0.9}
+]
+
+// Vue.js code
+var app = new Vue({
+
+  el: '#app',
+
+  data: {
+    visualization: null,
+    newNode: {
+      name: 'myRNA',
+      size: 5,
+      color:'green',
+      x: 15,
+      y:  15,
+      p1:   '1',
+      p2:   '2',
+      p3:   '3',
+    },
+    sample_data: [],
+    positions: [],
+    connections: [],
+  },
+
+  created: function () {
+    this.loadSampleData()
+    this.drawNetwork()
+  },
+
+  methods: {
+    loadSampleData: function() {
+      console.log("loadSampleData()")
+      this.sample_data = init_sample_data
+      this.positions = init_positions
+      this.connections = init_connections
+    },
+    drawNetwork: function() {
+      console.log("draw()");
+      this.visualization = d3plus.viz()
+      .container("#viz")       // 指定繪圖的container
+      .type("network")
+      .data(this.sample_data)  // 載入資料
+      .nodes(this.positions)   // 預先提供座標資料加速繪圖
+      .edges({
+        "color": (e=>e.color), // 客製化 edge 的顏色
+        "large": 100,          // 超過100條edge時，減少部分特效與資訊（如edge label）
+        "label": "strength",   // 在每個edge上顯示各自的strength資訊
+        "size": "strength",    // 根據strength調整edge粗細
+        "arrows": true,        // 讓edge顯示方向，預設為false，也可給數字指定箭頭大小
+        "value": this.connections,  // 載入connections資料
+      })
+      .color("color")
+      .size("size")            // node大小
+      .id("name")              // 指定data的key
+      .tooltip(["name", "size", "color", "a","b","c"]) // 指定要顯示的property
+      .draw()
+    },
+    addNode: function(){
+      console.log("addNode()");
+      this.sample_data.push({"name": this.newNode.name, "size": this.newNode.size, "color": this.newNode.color, "a":1, "b":2, "c":3, "d":4, "c":5, "e":6, "f":7, "h":8})
+      this.positions.push({"name": this.newNode.name, "x": this.newNode.x, "y": this.newNode.y})
+      this.connections.push({"source": this.newNode.name, "target": "alpha", "color": "Gold", "strength": 2.0})
+      this.visualization.nodes(this.positions).edges(this.connections).color("color").draw()
+    }
+  }
+})
+</script>

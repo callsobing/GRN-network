@@ -49,9 +49,9 @@
   <script>
     var visualization;
 
-  d3.tsv("./million_songs_data/artists.tsv", function(artists){
-    d3.tsv("./million_songs_data/nodes.tsv", function(nodes){
-      d3.tsv("./million_songs_data/edges.tsv", function(edges){
+  d3.tsv("./data/million_songs_data/artists.tsv", function(artists){
+    d3.tsv("./data/million_songs_data/nodes.tsv", function(nodes){
+      d3.tsv("./data/million_songs_data/edges.tsv", function(edges){
 
         // need to cast strength as number for proper label formatting
         edges.forEach(function(d){
