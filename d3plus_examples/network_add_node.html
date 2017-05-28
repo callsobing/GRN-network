@@ -1,0 +1,132 @@
+<!doctype html>
+<meta charset="utf-8">
+<script src="./lib/d3plus.v1.9.8/js/d3.min.js"></script>
+<script src="./lib/d3plus.v1.9.8/js/d3plus.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.js" charset="utf-8"></script>
+
+<!-- UI for user to add new node -->
+<section id="add-node">
+  <div id="vue-instance">
+    <!-- this will be the DOM element we will mount our VueJs instance to -->
+    Enter name:<input type="text" v-model="name"><br>
+    Enter size:<input type="text" v-model="size"><br>
+    Enter color:<input type="text" v-model="color"><br>
+    <pre>{{ $data }}</pre>
+  </div>
+  <button type="button" onclick="addNode()">addNode()</button>
+</section>
+
+<!-- container element for D3plus visualization -->
+<div id="viz"></div>
+
+<script>
+
+// VueJs code
+var vm = new Vue({
+  el: '#vue-instance',
+  data: {
+    newNode: {
+      name: 'myRNA',
+      size: '5',
+      color:'green',
+      p1:   '1',
+      p2:   '2',
+      p3:   '3',
+    },
+    sample_data1: [],
+    positions1: [],
+    connections1: [],
+  },
+
+  created: function(){
+    this.sayHi()
+  },
+
+  methods: {
+    sayHi: function(){
+      console.log("created");
+    }
+  },
+});
+
+// create sample dataset
+var sample_data = [
+  {"name": "alpha", "size": 10, "color": "Maroon",  "a":1, "b":2, "c":3},
+  {"name": "beta", "size": 12, "color": "Maroon",   "a":1, "b":2, "c":3},
+  {"name": "gamma", "size": 30, "color": "Navy",    "a":1, "b":2, "c":3},
+  {"name": "delta", "size": 26, "color": "Navy",    "a":1, "b":2, "c":3},
+  {"name": "epsilon", "size": 12, "color": "Maroon","a":1, "b":2, "c":3},
+  {"name": "zeta", "size": 26, "color": "Maroon",   "a":1, "b":2, "c":3},
+  {"name": "theta", "size": 11, "color": "Navy",    "a":1, "b":2, "c":3},
+  {"name": "eta", "size": 24, "color": "Maroon",    "a":1, "b":2, "c":3},
+  // {"name": "new-node", "size": 15, "color": "Green",    "a":1, "b":2, "c":3, "d":4, "c":5, "e":6, "f":7, "h":8},
+]
+// create list of node positions
+var positions = [
+  {"name": "alpha", "x": 10, "y": 15},
+  {"name": "beta", "x": 12, "y": 24},
+  {"name": "gamma", "x": 16, "y": 18},
+  {"name": "delta", "x": 26, "y": 21},
+  {"name": "epsilon", "x": 13, "y": 4},
+  {"name": "zeta", "x": 31, "y": 13},
+  {"name": "theta", "x": 19, "y": 8},
+  {"name": "eta", "x": 24, "y": 11},
+  // {"name": "new-node", "x": 15, "y": 15},
+]
+// create list of node connections
+var connections = [
+  {"source": "alpha", "target": "beta",    "color": "Gold"       ,"strength": 0.01},
+  {"source": "alpha", "target": "gamma",   "color": "Gold"       ,"strength": 0.2},
+  {"source": "beta",  "target": "delta",   "color": "LightGreen" ,"strength": 0.3},
+  {"source": "beta",  "target": "epsilon", "color": "Gold"       ,"strength": 0.4},
+  {"source": "zeta",  "target": "gamma",   "color": "LightGreen" ,"strength": 0.5},
+  {"source": "theta", "target": "gamma",   "color": "Gold"       ,"strength": 0.6},
+  {"source": "eta",   "target": "gamma",   "color": "Gold"       ,"strength": 0.9},
+  // {"source": "new-node",   "target": "alpha",   "color": "Gold"       ,"strength": 2.0},
+]
+
+// D3plus 重繪
+var visualization
+var draw = function(){
+  // instantiate d3plus
+  visualization = d3plus.viz()
+  .container("#viz")  // container DIV to hold the visualization
+  .type("network")    // visualization type
+  .data(sample_data)  // sample dataset to attach to nodes
+  .nodes(positions)   // x and y position of nodes
+  .edges({
+
+    "color": (e=>e.color),
+    "large": 100,     //超過100條edge時會減少特定特效與資訊（如edge label）
+    "label": "strength",
+    "size": "strength",
+    "arrows": true,
+    // "strength": 0.01,
+    // "strength": (e => parseFloat(e.strength)),
+    // "strength": function(e){
+    //   console.log(e);
+    //   return
+    // },
+    "value": connections,
+  })
+  .color("color")
+  .size("size")       // nodes size
+  .tooltip(["name", "size", "color", "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10"])
+  .id("name")         // key for which our data is unique on
+  .draw()
+}
+draw()
+
+// 使用者新增 node
+var addNode = function(){
+  console.log("addNode() trigered");
+
+  sample_data.push({"name": "c4lab", "size": 15, "color": "Navy", "a":1, "b":2, "c":3, "d":4, "c":5, "e":6, "f":7, "h":8})
+  positions.push({"name": "c4lab", "x": 15, "y": 15})
+  connections.push({"source": "c4lab", "target": "alpha", "color": "Gold", "strength": 2.0})
+
+  visualization.nodes(positions).edges(connections).color("color").draw()
+  // console.log($data);
+}
+
+</script>

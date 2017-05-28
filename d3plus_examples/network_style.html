@@ -1,0 +1,82 @@
+<!doctype html>
+<meta charset="utf-8">
+
+<!-- 先載入 D3js -->
+<script src="./lib/d3plus.v1.9.8/js/d3.min.js"></script>
+
+<!-- 再載入 D3plus -->
+<script src="./lib/d3plus.v1.9.8/js/d3plus.js"></script>
+
+<!-- 繪圖的container -->
+<div id="viz"></div>
+
+<script>
+// 主要資料，以name為key，a至h為不同property
+var sample_data = [
+  {"name": "alpha", "size": 10, "color": "Maroon",  "a":1, "b":2, "c":3, "d":4, "c":5, "e":6, "f":7, "h":8},
+  {"name": "beta", "size": 12, "color": "Maroon",   "a":1, "b":2, "c":3, "d":4, "c":5, "e":6, "f":7, "h":8},
+  {"name": "gamma", "size": 30, "color": "Navy",    "a":1, "b":2, "c":3, "d":4, "c":5, "e":6, "f":7, "h":8},
+  {"name": "delta", "size": 26, "color": "Navy",    "a":1, "b":2, "c":3, "d":4, "c":5, "e":6, "f":7, "h":8},
+  {"name": "epsilon", "size": 12, "color": "Maroon","a":1, "b":2, "c":3, "d":4, "c":5, "e":6, "f":7, "h":8},
+  {"name": "zeta", "size": 26, "color": "Maroon",   "a":1, "b":2, "c":3, "d":4, "c":5, "e":6, "f":7, "h":8},
+  {"name": "theta", "size": 11, "color": "Navy",    "a":1, "b":2, "c":3, "d":4, "c":5, "e":6, "f":7, "h":8},
+  {"name": "eta", "size": 24, "color": "Maroon",    "a":1, "b":2, "c":3, "d":4, "c":5, "e":6, "f":7, "h":8},
+  {"name": "lala", "size": 15, "color": "Green",    "a":1, "b":2, "c":3, "d":4, "c":5, "e":6, "f":7, "h":8},
+]
+// Node的座標資料，如不提供D3plus會隨機產生一種node不重疊的排法
+var positions = [
+  {"name": "alpha", "x": 10, "y": 15},
+  {"name": "beta", "x": 12, "y": 24},
+  {"name": "gamma", "x": 16, "y": 18},
+  {"name": "delta", "x": 26, "y": 21},
+  {"name": "epsilon", "x": 13, "y": 4},
+  {"name": "zeta", "x": 31, "y": 13},
+  {"name": "theta", "x": 19, "y": 8},
+  {"name": "eta", "x": 24, "y": 11}
+]
+// Edge的資料，每個點都需出現否則不會畫出來
+var connections = [
+  {"source": "alpha", "target": "beta",    "color": "Gold"       ,"strength": 0.01},
+  {"source": "alpha", "target": "gamma",   "color": "Gold"       ,"strength": 0.2},
+  {"source": "beta",  "target": "delta",   "color": "LightGreen" ,"strength": 0.3},
+  {"source": "beta",  "target": "epsilon", "color": "Gold"       ,"strength": 0.4},
+  {"source": "zeta",  "target": "gamma",   "color": "LightGreen" ,"strength": 0.5},
+  {"source": "theta", "target": "gamma",   "color": "Gold"       ,"strength": 0.6},
+  {"source": "eta",   "target": "gamma",   "color": "Gold"       ,"strength": 0.9}
+]
+
+
+// instantiate d3plus
+d3plus.viz()
+.container("#viz")       // 指定繪圖的container
+.type("network")
+.data(sample_data)       // 載入資料
+.tooltip([               // 指定要顯示的property
+  "name",
+  "size",
+  "color",
+  "a",
+  "b",
+  "c",
+  "d",
+  "e",
+  "f",
+  "g",
+  "h",
+  "i",
+  "j"])
+.nodes(positions)        // 預先提供座標資料加速繪圖
+.edges({
+  "color": (e=>e.color), // 客製化 edge 的顏色
+  "large": 100,          // 超過100條edge時，減少部分特效與資訊（如edge label）
+  "label": "strength",   // 在每個edge上顯示各自的strength資訊
+  "size": "strength",    // 根據strength調整edge粗細
+  "arrows": true,        // 讓edge顯示方向，預設為false，也可給數字指定箭頭大小
+  "value": connections,  // 載入connections資料
+})
+.color("color")
+.size("size")            // node大小
+.id("name")              // 指定data的key
+.draw()
+
+</script>
