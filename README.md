@@ -1,6 +1,18 @@
-# grn_client
 
-> A Vue.js project
+> A d3plus visualization for TRANSFAC gene regulation network.
+
+## Tools
+#### Client (host on GitHub)
+* [d3plus](https://d3plus.org/)
+* [Vue.js 2](https://cn.vuejs.org/)
+* [webpack 2](https://webpack.github.io/)
+* [ElementUI](http://element.eleme.io/#/)
+
+#### Server (self host)
+* [MongoDB](https://docs.mongodb.com/)
+* [Mongoose](http://mongoosejs.com/)
+* [Node.js](https://nodejs.org/en/)
+* [Express.js](http://expressjs.com/zh-tw/)
 
 ## Build Setup
 
