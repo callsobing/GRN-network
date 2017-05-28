@@ -35,9 +35,9 @@ export default {
   methods: {
     init_draw () {
       let vm = this
-      d3.csv('/static/id_2prop.csv', function(nodes){
+      d3.tsv('./static/id_2prop.tsv', function(nodes){
         // console.log('** nodes: ', nodes);
-        d3.csv('/static/GRNv1.0.0.csv', function(edges){
+        d3.tsv('./static/GRNv1.0.0.tsv', function(edges){
           // console.log('** edges: ', edges);
 
           let visualization = d3plus.viz()
