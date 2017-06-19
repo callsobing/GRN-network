@@ -1,6 +1,24 @@
 # grn-network
 
-> A D3 visualization for gene regulatory network
+> A D3 visualization for TRANSFAC gene regulatory network
+
+## Tools
+#### Client
+* [d3plus](https://d3plus.org/)
+* [Vue.js 2](https://cn.vuejs.org/)
+* [webpack 2](https://webpack.github.io/)
+* [ElementUI](http://element.eleme.io/#/)
+
+#### Server
+* [MongoDB](https://docs.mongodb.com/)
+* [Mongoose](http://mongoosejs.com/)
+* [Node.js](https://nodejs.org/en/)
+* [Express.js](http://expressjs.com/zh-tw/)
+
+
+## Screenshot
+![screenshot](https://raw.githubusercontent.com/choznerol/GRN-network/master/screenshots/v0.1.0.gif)
+
 
 ## Build Setup
 
@@ -16,15 +34,4 @@ npm run build
 
 # build for production and view the bundle analyzer report
 npm run build --report
-
-# run unit tests
-npm run unit
-
-# run e2e tests
-npm run e2e
-
-# run all tests
-npm test
 ```
-
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
