@@ -35,12 +35,13 @@ export default {
     this.init_autocomplete()
   },
   methods: {
-    init_draw () {
+    init_draw () {  
       let vm = this
       d3.tsv(vm.node_file_path, function(nodes){
-        // console.log('** nodes: ', nodes);
+        
         d3.tsv(vm.edge_file_path, function(edges){
-          // console.log('** edges: ', edges);
+          console.log('** edges: ', edges)
+          console.log('** nodes: ', nodes)
 
           let visualization = d3plus.viz()
           .id("id")                        // set id to match on nodes
@@ -56,10 +57,21 @@ export default {
             "arrows": true                 // show directional arrows
           })
           .tooltip(['name', 'organism'])
+          .mouse({
+            "click": function(data, viz) {
+              console.log("[clicked] data:", data)
+              console.log("[clicked] viz:", viz)
+              viz.focus(data.id).draw()
+            }
+          })
           .draw(() => console.log('Started Drawing!'))
           vm.viz = visualization
         })
       })
+    },
+    handleClick (data, viz) {
+      console.log(data)
+      return viz
     },
     redraw (focus_node) {
       this.viz.focus(focus_node).draw()

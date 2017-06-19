@@ -32,7 +32,8 @@ export default {
     return {
       title: 'DBtest.vue',
       ac: 'G000001',
-      apiUrl: 'http://140.112.94.72/nodejsAppli/gene/',
+      // apiUrl: 'http://140.112.94.72/nodejsAppli/gene/',
+      apiUrl: 'http://localhost:27017/gene/',
       record: {k: 'NA', v: 'NA'}
     }
   },
@@ -68,17 +69,6 @@ export default {
       }
       return arr
     }
-    // vue-resource way
-    // getGeneInfo (ac) {
-    //   this.$http.get(this.apiUrl, {headers: {'Access-Control-Allow-Origin': true}})
-    //     .then((res) => {
-    //       console.log(res)
-    //       this.$set('record', res.data)
-    //     })
-    //     .catch((err) => {
-    //       console.log(err)
-    //     })
-    // },
   },
   computed: {
     recordArr () {
