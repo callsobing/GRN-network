@@ -4,6 +4,15 @@ const router = express.Router();
 const db = require('./db');
 
 
+router.get('/gene_factor_site/test', function (req, res, next) {
+  db.GeneFactorSite.findOne().exec(function(err, result){
+    if ( err ) throw err;
+    const msg = 'db.GeneFactorSite.findOne() -> ' + result
+    console.log(msg)
+    res.end(msg)
+  });
+});
+
 // GET /gene_factor_site/T00001
 router.get('/gene_factor_site/:AC', function (req, res, next) {
   const conditions = {'AC': req.params.AC}

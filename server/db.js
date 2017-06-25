@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
+// const uri = require('./config/env/production');
 
 const Schema = mongoose.Schema;
 
@@ -119,10 +120,11 @@ const Models={
 };
 
 /**
- * 创建数据库名称并连接
  * Connecting to Mongod instance.
  */
-const dbHost = 'mongodb://localhost:27017/GRN';
+const dbHost = process.env.MONGODB_URI
+// const dbHost = uri.mongoDBuri;
+// const dbHost = 'mongodb://localhost:27017/GRN';
 mongoose.connect(dbHost);
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
