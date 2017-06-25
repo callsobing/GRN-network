@@ -1,6 +1,6 @@
 # grn-network
 
-> A D3 visualization for TRANSFAC gene regulatory network
+> A D3 visualization for TRANSFAC gene regulatory network </br>
 > Demo: https://choznerol.github.io/GRN-network/#/
 
 ## Tools
