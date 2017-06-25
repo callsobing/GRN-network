@@ -1,6 +1,7 @@
 # grn-network
 
 > A D3 visualization for TRANSFAC gene regulatory network
+> Demo: https://choznerol.github.io/GRN-network/#/
 
 ## Tools
 #### Client
